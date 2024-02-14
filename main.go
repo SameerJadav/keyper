@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -17,8 +18,6 @@ EnvVars is the structure of env_vars.json file
 	}
 */
 type EnvVars map[string]map[string]string
-
-const ENV_VARS_FILE = "env_vars.json"
 
 var description = `Scoop is a CLI tool for effortlessly managing all your environment variables.
 Save environment variables locally and retrieve them with just one command.
@@ -37,12 +36,13 @@ func main() {
 	if len(os.Args) == 1 {
 		fmt.Println(description)
 	}
-	envVars := getEnvVars()
-	set(envVars)
+	envVarFile := filepath.Join(os.Getenv("HOME"), "scoop.json")
+	envVars := getEnvVars(envVarFile)
+	set(envVars, envVarFile)
 	get(envVars)
 }
 
-func set(envVars EnvVars) {
+func set(envVars EnvVars, envVarFile string) {
 	if len(os.Args) == 1 || os.Args[1] != "set" {
 		return
 	}
@@ -78,7 +78,7 @@ func set(envVars EnvVars) {
 		return
 	}
 
-	if err := os.WriteFile(ENV_VARS_FILE, jsonData, 0o644); err != nil {
+	if err := os.WriteFile(envVarFile, jsonData, 0o644); err != nil {
 		fmt.Println("Error saving env variables.", err)
 		return
 	}
@@ -109,8 +109,8 @@ func get(envVars EnvVars) {
 	}
 }
 
-func getEnvVars() EnvVars {
-	file, err := os.ReadFile(ENV_VARS_FILE)
+func getEnvVars(envVarfile string) EnvVars {
+	file, err := os.ReadFile(envVarfile)
 
 	if os.IsNotExist(err) {
 		return make(EnvVars)
