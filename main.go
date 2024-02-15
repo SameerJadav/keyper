@@ -9,7 +9,7 @@ import (
 )
 
 /*
-EnvVars is the structure of env_vars.json file
+EnvVars is the structure of scoop.json file
 
 	{
 	  "project": {
@@ -19,7 +19,7 @@ EnvVars is the structure of env_vars.json file
 */
 type EnvVars map[string]map[string]string
 
-var description = `Scoop is a CLI tool for effortlessly managing all your environment variables.
+const description = `Scoop is a CLI tool for effortlessly managing all your environment variables.
 Save environment variables locally and retrieve them with just one command.
 Scoop is simple, useful, and blazingly fast.
 
@@ -37,12 +37,12 @@ func main() {
 		fmt.Println(description)
 	}
 	envVarFile := filepath.Join(os.Getenv("HOME"), "scoop.json")
-	envVars := getEnvVars(envVarFile)
-	set(envVars, envVarFile)
-	get(envVars)
+	envVars := loadEnvVars(envVarFile)
+	save(envVars, envVarFile)
+	retrieve(envVars)
 }
 
-func set(envVars EnvVars, envVarFile string) {
+func save(envVars EnvVars, envVarFile string) {
 	if len(os.Args) == 1 || os.Args[1] != "set" {
 		return
 	}
@@ -84,7 +84,7 @@ func set(envVars EnvVars, envVarFile string) {
 	}
 }
 
-func get(envVars EnvVars) {
+func retrieve(envVars EnvVars) {
 	if len(os.Args) == 1 || os.Args[1] != "get" {
 		return
 	}
@@ -109,7 +109,7 @@ func get(envVars EnvVars) {
 	}
 }
 
-func getEnvVars(envVarfile string) EnvVars {
+func loadEnvVars(envVarfile string) EnvVars {
 	file, err := os.ReadFile(envVarfile)
 
 	if os.IsNotExist(err) {
