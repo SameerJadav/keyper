@@ -34,19 +34,27 @@ Available Commands:
 
 func main() {
 	if len(os.Args) == 1 {
-		fmt.Println(description)
-	}
-	envVarFile := filepath.Join(os.Getenv("HOME"), "scoop.json")
-	envVars := loadEnvVars(envVarFile)
-	save(envVars, envVarFile)
-	retrieve(envVars)
-}
-
-func save(envVars EnvVars, envVarFile string) {
-	if len(os.Args) == 1 || os.Args[1] != "set" {
+		showUsage()
 		return
 	}
 
+	envVarFile := filepath.Join(os.Getenv("HOME"), "scoop.json")
+	envVars := loadEnvVars(envVarFile)
+
+	switch os.Args[1] {
+	case "set":
+		save(envVars, envVarFile)
+	case "get":
+		retrieve(envVars)
+	case "--help", "-h":
+		showUsage()
+		return
+	default:
+		fmt.Println("Error: Unknown Command.\nRun \"scoop --help\" for usage.")
+	}
+}
+
+func save(envVars EnvVars, envVarFile string) {
 	if len(os.Args) < 4 {
 		fmt.Println("Usage: scoop set <project> <key=value> ...")
 		return
@@ -85,10 +93,6 @@ func save(envVars EnvVars, envVarFile string) {
 }
 
 func retrieve(envVars EnvVars) {
-	if len(os.Args) == 1 || os.Args[1] != "get" {
-		return
-	}
-
 	if len(os.Args) < 3 {
 		fmt.Println("Usage: scoop get <project>")
 		return
@@ -127,4 +131,8 @@ func loadEnvVars(envVarfile string) EnvVars {
 	}
 
 	return envVars
+}
+
+func showUsage() {
+	fmt.Println(description)
 }
