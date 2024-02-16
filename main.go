@@ -23,14 +23,23 @@ const description = `Scoop is a CLI tool for effortlessly managing all your envi
 Save environment variables locally and retrieve them with just one command.
 Scoop is simple, useful, and blazingly fast.
 
-Usage:
+Usage
   scoop [command]
 
-Available Commands:
-  set: Saves project's environment variable locally
+Available Commands
+  set  Saves project's environment variable locally
        scoop set <project> <key=value> ...
-  get: Retrieves project's environment variable
-       scoop get <project>`
+  get  Retrieves project's environment variable
+       scoop get <project>
+
+Flags
+  --help, -h  help for scoop
+
+Examples
+  scoop set my-project DB_HOST=localhost DB_PORT=5432
+  scoop get my-project
+
+Learn more about the Scoop at https://github.com/SameerJadav/scoop`
 
 func main() {
 	if len(os.Args) == 1 {
