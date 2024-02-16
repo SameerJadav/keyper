@@ -9,7 +9,7 @@ import (
 )
 
 /*
-EnvVars is the structure of scoop.json file
+EnvVars is the structure of keyper.json file
 
 	{
 	  "project": {
@@ -19,27 +19,27 @@ EnvVars is the structure of scoop.json file
 */
 type EnvVars map[string]map[string]string
 
-const description = `Scoop is a CLI tool for effortlessly managing all your environment variables.
+const description = `Keyper is a CLI tool for effortlessly managing all your environment variables.
 Save environment variables locally and retrieve them with just one command.
-Scoop is simple, useful, and blazingly fast.
+Keyper is simple, useful, and blazingly fast.
 
 Usage
-  scoop [command]
+  keyper [command]
 
 Available Commands
   set  Saves project's environment variable locally
-       scoop set <project> <key=value> ...
+       keyper set <project> <key=value> ...
   get  Retrieves project's environment variable
-       scoop get <project>
+       keyper get <project>
 
 Flags
-  --help, -h  help for scoop
+  --help, -h  help for keyper
 
 Examples
-  scoop set my-project DB_HOST=localhost DB_PORT=5432
-  scoop get my-project
+  keyper set my-project DB_HOST=localhost DB_PORT=5432
+  keyper get my-project
 
-Learn more about the Scoop at https://github.com/SameerJadav/scoop`
+Learn more about the Keyper at https://github.com/SameerJadav/keyper`
 
 func main() {
 	if len(os.Args) == 1 {
@@ -47,7 +47,7 @@ func main() {
 		return
 	}
 
-	envVarFile := filepath.Join(os.Getenv("HOME"), "scoop.json")
+	envVarFile := filepath.Join(os.Getenv("HOME"), "keyper.json")
 	envVars := loadEnvVars(envVarFile)
 
 	switch os.Args[1] {
@@ -59,13 +59,13 @@ func main() {
 		showUsage()
 		return
 	default:
-		fmt.Println("Error: Unknown Command.\nRun \"scoop --help\" for usage.")
+		fmt.Println("Error: Unknown Command.\nRun \"keyper --help\" for usage.")
 	}
 }
 
 func save(envVars EnvVars, envVarFile string) {
 	if len(os.Args) < 4 {
-		fmt.Println("Usage: scoop set <project> <key=value> ...")
+		fmt.Println("Usage: keyper set <project> <key=value> ...")
 		return
 	}
 
@@ -103,7 +103,7 @@ func save(envVars EnvVars, envVarFile string) {
 
 func retrieve(envVars EnvVars) {
 	if len(os.Args) < 3 {
-		fmt.Println("Usage: scoop get <project>")
+		fmt.Println("Usage: keyper get <project>")
 		return
 	}
 
