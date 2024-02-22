@@ -1,45 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
-	"strings"
 )
-
-/*
-EnvVars is the structure of keyper.json file
-
-	{
-	  "project": {
-	    "key": "value"
-	  }
-	}
-*/
-type EnvVars map[string]map[string]string
-
-const description = `Keyper is a CLI tool for effortlessly managing all your environment variables.
-Save environment variables locally and retrieve them with just one command.
-Keyper is simple, useful, and blazingly fast.
-
-Usage
-  keyper [command]
-
-Available Commands
-  set  Saves project's environment variable locally
-       keyper set <project> <key=value> ...
-  get  Retrieves project's environment variable
-       keyper get <project>
-
-Flags
-  --help, -h  help for keyper
-
-Examples
-  keyper set my-project DB_HOST=localhost DB_PORT=5432
-  keyper get my-project
-
-Learn more about the Keyper at https://github.com/SameerJadav/keyper`
 
 func main() {
 	if len(os.Args) == 1 {
@@ -47,101 +11,15 @@ func main() {
 		return
 	}
 
-	envVarFile := filepath.Join(os.Getenv("HOME"), "keyper.json")
-	envVars := loadEnvVars(envVarFile)
-
 	switch os.Args[1] {
 	case "set":
-		save(envVars, envVarFile)
+		save()
 	case "get":
-		retrieve(envVars)
+		retrieve()
 	case "--help", "-h":
 		showUsage()
 		return
 	default:
 		fmt.Println("Error: Unknown Command.\nRun \"keyper --help\" for usage.")
 	}
-}
-
-func save(envVars EnvVars, envVarFile string) {
-	if len(os.Args) < 4 {
-		fmt.Println("Usage: keyper set <project> <key=value> ...")
-		return
-	}
-
-	project := os.Args[2]
-	kvPairs := os.Args[3:]
-
-	if _, exist := envVars[project]; !exist {
-		envVars[project] = make(map[string]string)
-	}
-
-	for _, kvPair := range kvPairs {
-		kv := strings.Split(kvPair, "=")
-
-		if len(kv) != 2 {
-			fmt.Printf("Invalid key=value pair: %s\n", kvPair)
-			return
-		}
-
-		key, value := kv[0], kv[1]
-
-		envVars[project][key] = value
-	}
-
-	jsonData, err := json.Marshal(envVars)
-	if err != nil {
-		fmt.Println("Error encoding json.", err)
-		return
-	}
-
-	if err := os.WriteFile(envVarFile, jsonData, 0o644); err != nil {
-		fmt.Println("Error saving env variables.", err)
-		return
-	}
-}
-
-func retrieve(envVars EnvVars) {
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: keyper get <project>")
-		return
-	}
-
-	if len(os.Args) > 4 {
-		fmt.Println("Only one project's environment variables can be retrieved.")
-	}
-
-	project, exist := envVars[os.Args[2]]
-	if !exist {
-		fmt.Println("The project does not exist.")
-		return
-	}
-
-	for key, value := range project {
-		fmt.Printf("%s=%s\n", key, value)
-	}
-}
-
-func loadEnvVars(envVarfile string) EnvVars {
-	file, err := os.ReadFile(envVarfile)
-
-	if os.IsNotExist(err) {
-		return make(EnvVars)
-	} else if err != nil {
-		fmt.Println("Error opening the file.", err)
-		os.Exit(1)
-	}
-
-	var envVars EnvVars
-
-	if err := json.Unmarshal(file, &envVars); err != nil {
-		fmt.Println("Error decoding json file.", err)
-		os.Exit(1)
-	}
-
-	return envVars
-}
-
-func showUsage() {
-	fmt.Println(description)
 }
