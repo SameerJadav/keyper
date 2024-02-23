@@ -26,10 +26,15 @@ Usage
   keyper [command]
 
 Available Commands
-  set  Saves project's environment variable locally
-       keyper set <project> <key=value> ...
-  get  Retrieves project's environment variable
-       keyper get <project>
+  set     Saves project's environment variables locally
+          keyper set <project> <key=value> ...
+  get     Retrieves project's environment variables
+          keyper get <project>
+  remove  Remove specific environment variables from a project
+          keyper remove <project> <key=value> ...
+  purge   Remove the entire project and its environment variables
+          keyper purge <project> ...
+
 
 Flags
   --help, -h  help for keyper
@@ -65,6 +70,19 @@ func loadEnvVars() EnvVars {
 	}
 
 	return envVars
+}
+
+func writeEnvVarsToFile(envVars EnvVars, envVarFile string) {
+	jsonData, err := json.Marshal(envVars)
+	if err != nil {
+		fmt.Println("Error: An error occurred while converting data to JSON format.")
+		return
+	}
+
+	if err := os.WriteFile(envVarFile, jsonData, 0o644); err != nil {
+		fmt.Println("Error: Failed to save the environment variables.")
+		return
+	}
 }
 
 func showUsage() {

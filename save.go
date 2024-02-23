@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -36,14 +35,5 @@ func save() {
 		envVars[project][key] = value
 	}
 
-	jsonData, err := json.Marshal(envVars)
-	if err != nil {
-		fmt.Println("Error: An error occurred while converting data to JSON format.")
-		return
-	}
-
-	if err := os.WriteFile(envVarFile, jsonData, 0o644); err != nil {
-		fmt.Println("Error: Failed to save the environment variable(s).")
-		return
-	}
+	writeEnvVarsToFile(envVars, envVarFile)
 }

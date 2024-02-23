@@ -16,6 +16,10 @@ func main() {
 		save()
 	case "get":
 		retrieve()
+	case "remove":
+		remove()
+	case "purge":
+		purge()
 	case "--help", "-h":
 		showUsage()
 		return
