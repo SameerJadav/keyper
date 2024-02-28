@@ -17,7 +17,7 @@ Keyper is a CLI tool for effortlessly managing your environment variables. Save 
 To install Keyper, ensure you have Go installed on your machine. If you haven't installed Go yet, you can follow the [official Go installation instructions](https://go.dev/doc/install).
 
 ```
-go install github.com/SameerJadav/keyper
+go install github.com/SameerJadav/keyper@latest
 ```
 
 This will install a Go binary that automatically binds to your `$GOPATH`.
