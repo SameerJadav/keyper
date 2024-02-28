@@ -8,7 +8,7 @@ import (
 
 func purge() {
 	if len(os.Args) < 3 {
-		fmt.Println("USAGE: keyper purge <project> ...")
+		fmt.Println("Usage: keyper purge <project> ...")
 		return
 	}
 
@@ -28,12 +28,12 @@ func purge() {
 
 	writeEnvVarsToFile(envVars, envVarFile)
 
-	fmt.Println("INFO: Successfully purged project.")
+	fmt.Println("Info: Successfully purged project.")
 }
 
 func remove() {
 	if len(os.Args) < 4 {
-		fmt.Println("USAGE: keyper remove <project> <key=value> ...")
+		fmt.Println("Usage: keyper remove <project> <key=value> ...")
 		return
 	}
 
@@ -68,5 +68,5 @@ func remove() {
 
 	writeEnvVarsToFile(envVars, envVarFile)
 
-	fmt.Println("INFO: Successfully removed environment variable from the project.")
+	fmt.Println("Info: Successfully removed environment variable from the project.")
 }
