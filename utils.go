@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 /*
@@ -18,35 +19,22 @@ EnvVars is the structure of keyper.json file
 */
 type EnvVars map[string]map[string]string
 
-const description = `Keyper is a CLI tool for effortlessly managing all your environment variables.
-Save environment variables locally and retrieve them with just one command.
-Keyper is simple, useful, and blazingly fast.
-
-Usage
-  keyper [command]
-
-Available Commands
-  set     Saves project's environment variables locally
-          keyper set <project> <key=value> ...
-  get     Retrieves project's environment variables
-          keyper get <project>
-  remove  Remove specific environment variables from a project
-          keyper remove <project> <key=value> ...
-  purge   Remove the entire project and its environment variables
-          keyper purge <project> ...
-
-
-Flags
-  --help, -h  help for keyper
-
-Examples
-  keyper set my-project DB_HOST=localhost DB_PORT=5432
-  keyper get my-project
-
-Learn more about the Keyper at https://github.com/SameerJadav/keyper`
-
 func getEnvVarFile() string {
-	envVarFile := filepath.Join(os.Getenv("HOME"), "keyper.json")
+	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" && runtime.GOOS != "windows" {
+		fmt.Println("Error: OS not supported.")
+		os.Exit(1)
+	}
+
+	if runtime.GOOS == "windows" {
+		return filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "keyper.json")
+	}
+
+	xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
+	if xdgConfigHome == "" {
+		xdgConfigHome = filepath.Join(os.Getenv("HOME"), ".config")
+	}
+
+	envVarFile := filepath.Join(xdgConfigHome, "keyper.json")
 	return envVarFile
 }
 
@@ -75,7 +63,7 @@ func loadEnvVars() EnvVars {
 func writeEnvVarsToFile(envVars EnvVars, envVarFile string) {
 	jsonData, err := json.Marshal(envVars)
 	if err != nil {
-		fmt.Println("Error: An error occurred while converting data to JSON format.")
+		fmt.Println("Error: Failed to convert data into JSON format.")
 		return
 	}
 
@@ -83,8 +71,4 @@ func writeEnvVarsToFile(envVars EnvVars, envVarFile string) {
 		fmt.Println("Error: Failed to save the environment variables.")
 		return
 	}
-}
-
-func showUsage() {
-	fmt.Println(description)
 }
