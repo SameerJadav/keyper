@@ -32,6 +32,10 @@ func save() {
 
 		key, value := kv[0], kv[1]
 
+		if key == "" || value == "" {
+			fmt.Println("Error: Key and value cannot be an empty string.")
+		}
+
 		envVars[project][key] = value
 	}
 
