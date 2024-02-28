@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 )
 
 func purge() {
@@ -33,36 +32,26 @@ func purge() {
 
 func remove() {
 	if len(os.Args) < 4 {
-		fmt.Println("Usage: keyper remove <project> <key=value> ...")
+		fmt.Println("Usage: keyper remove <project> <key> ...")
 		return
 	}
 
 	project := os.Args[2]
-	kvPairs := os.Args[3:]
+	keys := os.Args[3:]
 
 	envVarFile := getEnvVarFile()
 	envVars := loadEnvVars()
 
 	if _, exist := envVars[project]; !exist {
-		fmt.Printf("Error: The project %q does not exist.\n", project)
+		fmt.Println("Error: The project does not exist.")
 		return
 	}
 
-	for _, kvPair := range kvPairs {
-		kv := strings.Split(kvPair, "=")
-
-		if len(kv) != 2 {
-			fmt.Printf("Error: Invalid key=value pair %q\nPlease provide valid key-value pairs in the format \"key=value\".\n", kvPair)
-			return
-		}
-
-		key := kv[0]
-
+	for _, key := range keys {
 		if _, exist := envVars[project][key]; !exist {
-			fmt.Printf("Error: No environment variable exists with the key %q for the project %q", key, project)
+			fmt.Printf("Error: No environment variable exists with the key %q for the project %q\n", key, project)
 			return
 		}
-
 		delete(envVars[project], key)
 	}
 
