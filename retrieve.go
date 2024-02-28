@@ -11,7 +11,7 @@ func retrieve() {
 		return
 	}
 
-	if len(os.Args) > 4 {
+	if len(os.Args) > 3 {
 		fmt.Println("Error: Only one project's environment variables can be retrieved.\nUsage: keyper get <project>")
 		return
 	}
