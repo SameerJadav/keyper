@@ -17,6 +17,11 @@ func purge() {
 	envVars := loadEnvVars()
 
 	for _, project := range projects {
+		if project == "" {
+			fmt.Println("Error: Project cannot be an empty string.")
+			return
+		}
+
 		if _, exist := envVars[project]; !exist {
 			fmt.Printf("Error: The project %q does not exist.\n", project)
 			return
@@ -37,6 +42,11 @@ func remove() {
 	}
 
 	project := os.Args[2]
+	if project == "" {
+		fmt.Println("Error: Project cannot be an empty string.")
+		return
+	}
+
 	keys := os.Args[3:]
 
 	envVarFile := getEnvVarFile()

@@ -18,7 +18,13 @@ func retrieve() {
 
 	envVars := loadEnvVars()
 
-	project, exist := envVars[os.Args[2]]
+	projectAsArg := os.Args[2]
+	if projectAsArg == "" {
+		fmt.Println("Error: Project cannot be an empty string.")
+		return
+	}
+
+	project, exist := envVars[projectAsArg]
 	if !exist {
 		fmt.Println("Error: The project does not exist.")
 		return

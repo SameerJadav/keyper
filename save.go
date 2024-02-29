@@ -13,6 +13,11 @@ func save() {
 	}
 
 	project := os.Args[2]
+	if project == "" {
+		fmt.Println("Error: Project cannot be an empty string.")
+		return
+	}
+
 	kvPairs := os.Args[3:]
 
 	envVarFile := getEnvVarFile()
