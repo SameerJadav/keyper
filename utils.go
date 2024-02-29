@@ -20,22 +20,20 @@ EnvVars is the structure of keyper.json file
 type EnvVars map[string]map[string]string
 
 func getEnvVarFile() string {
-	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" && runtime.GOOS != "windows" {
+	paths := map[string]string{
+		"linux":   filepath.Join(os.Getenv("HOME"), ".config", "keyper.json"),
+		"darwin":  filepath.Join(os.Getenv("HOME"), ".config", "keyper.json"),
+		"windows": filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "keyper.json"),
+	}
+
+	path, exist := paths[runtime.GOOS]
+
+	if !exist {
 		fmt.Println("Error: OS not supported.")
 		os.Exit(1)
 	}
 
-	if runtime.GOOS == "windows" {
-		return filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "keyper.json")
-	}
-
-	xdgConfigHome := os.Getenv("XDG_CONFIG_HOME")
-	if xdgConfigHome == "" {
-		xdgConfigHome = filepath.Join(os.Getenv("HOME"), ".config")
-	}
-
-	envVarFile := filepath.Join(xdgConfigHome, "keyper.json")
-	return envVarFile
+	return path
 }
 
 func loadEnvVars() EnvVars {
