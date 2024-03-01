@@ -40,13 +40,25 @@ func main() {
 
 	switch os.Args[1] {
 	case "set":
-		save()
+		if err := save(); err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
 	case "get":
-		retrieve()
+		if err := retrieve(); err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
 	case "remove":
-		remove()
+		if err := remove(); err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
 	case "purge":
-		purge()
+		if err := purge(); err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
 	case "--help", "-h":
 		fmt.Println(description)
 		return

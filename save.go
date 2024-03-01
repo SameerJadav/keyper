@@ -6,22 +6,28 @@ import (
 	"strings"
 )
 
-func save() {
+func save() error {
 	if len(os.Args) < 4 {
 		fmt.Println("Usage: keyper set <project> <key=value> ...")
-		return
+		return nil
 	}
 
 	project := os.Args[2]
 	if project == "" {
-		fmt.Println("Error: Project cannot be an empty string.")
-		return
+		return fmt.Errorf("project cannot be an empty string")
 	}
 
 	kvPairs := os.Args[3:]
 
-	envVarFile := getEnvVarFile()
-	envVars := loadEnvVars()
+	envVarFile, err := getEnvVarFile()
+	if err != nil {
+		return err
+	}
+
+	envVars, err := loadEnvVars()
+	if err != nil {
+		return err
+	}
 
 	if _, exist := envVars[project]; !exist {
 		envVars[project] = make(map[string]string)
@@ -31,18 +37,21 @@ func save() {
 		kv := strings.Split(kvPair, "=")
 
 		if len(kv) != 2 {
-			fmt.Printf("Error: Invalid key=value pair %q\nPlease provide valid key-value pairs in the format \"key=value\".\n", kvPair)
-			return
+			return fmt.Errorf("invalid key=value pair %q\nPlease provide valid key-value pairs in the format \"key=value\"", kvPair)
 		}
 
 		key, value := kv[0], kv[1]
 
 		if key == "" || value == "" {
-			fmt.Println("Error: Key and value cannot be an empty string.")
+			return fmt.Errorf("key and value cannot be an empty string")
 		}
 
 		envVars[project][key] = value
 	}
 
-	writeEnvVarsToFile(envVars, envVarFile)
+	if err := writeEnvVarsToFile(envVars, envVarFile); err != nil {
+		return err
+	}
+
+	return nil
 }

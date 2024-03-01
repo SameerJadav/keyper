@@ -19,7 +19,7 @@ EnvVars is the structure of keyper.json file
 */
 type EnvVars map[string]map[string]string
 
-func getEnvVarFile() string {
+func getEnvVarFile() (string, error) {
 	paths := map[string]string{
 		"linux":   filepath.Join(os.Getenv("HOME"), ".config", "keyper.json"),
 		"darwin":  filepath.Join(os.Getenv("HOME"), ".config", "keyper.json"),
@@ -27,46 +27,45 @@ func getEnvVarFile() string {
 	}
 
 	path, exist := paths[runtime.GOOS]
-
 	if !exist {
-		fmt.Println("Error: OS not supported.")
-		os.Exit(1)
+		return "", fmt.Errorf("operating system not supported")
 	}
 
-	return path
+	return path, nil
 }
 
-func loadEnvVars() EnvVars {
-	envVarFile := getEnvVarFile()
+func loadEnvVars() (EnvVars, error) {
+	envVarFile, err := getEnvVarFile()
+	if err != nil {
+		return nil, err
+	}
 
 	file, err := os.ReadFile(envVarFile)
 
 	if os.IsNotExist(err) {
-		return make(EnvVars)
+		return make(EnvVars), nil
 	} else if err != nil {
-		fmt.Println("Error: Unable to open the JSON file containing the environment variables.")
-		os.Exit(1)
+		return nil, fmt.Errorf("failed to read environment variables file")
 	}
 
 	var envVars EnvVars
 
 	if err := json.Unmarshal(file, &envVars); err != nil {
-		fmt.Println("Error: Failed to decode the JSON file containing the environment variables.")
-		os.Exit(1)
+		return nil, fmt.Errorf("failed to decode the JSON file that contains the environment variables")
 	}
 
-	return envVars
+	return envVars, nil
 }
 
-func writeEnvVarsToFile(envVars EnvVars, envVarFile string) {
-	jsonData, err := json.Marshal(envVars)
+func writeEnvVarsToFile(envVars EnvVars, envVarFile string) error {
+	data, err := json.Marshal(envVars)
 	if err != nil {
-		fmt.Println("Error: Failed to convert data into JSON format.")
-		return
+		return fmt.Errorf("failed to encode data as JSON")
 	}
 
-	if err := os.WriteFile(envVarFile, jsonData, 0o644); err != nil {
-		fmt.Println("Error: Failed to save the environment variables.")
-		return
+	if err := os.WriteFile(envVarFile, data, 0o644); err != nil {
+		return fmt.Errorf("failed to save environment variables")
 	}
+
+	return nil
 }

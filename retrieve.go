@@ -5,32 +5,34 @@ import (
 	"os"
 )
 
-func retrieve() {
+func retrieve() error {
 	if len(os.Args) < 3 {
 		fmt.Println("Usage: keyper get <project>")
-		return
+		return nil
 	}
 
 	if len(os.Args) > 3 {
-		fmt.Println("Error: Only one project's environment variables can be retrieved.\nUsage: keyper get <project>")
-		return
+		return fmt.Errorf("only one project's environment variables can be retrieved.\nUsage: keyper get <project>")
 	}
 
-	envVars := loadEnvVars()
+	envVars, err := loadEnvVars()
+	if err != nil {
+		return err
+	}
 
 	projectAsArg := os.Args[2]
 	if projectAsArg == "" {
-		fmt.Println("Error: Project cannot be an empty string.")
-		return
+		return fmt.Errorf("project cannot be an empty string")
 	}
 
 	project, exist := envVars[projectAsArg]
 	if !exist {
-		fmt.Println("Error: The project does not exist.")
-		return
+		return fmt.Errorf("the project does not exist")
 	}
 
 	for key, value := range project {
 		fmt.Printf("%s=%s\n", key, value)
 	}
+
+	return nil
 }

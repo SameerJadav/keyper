@@ -5,67 +5,80 @@ import (
 	"os"
 )
 
-func purge() {
+func purge() error {
 	if len(os.Args) < 3 {
 		fmt.Println("Usage: keyper purge <project> ...")
-		return
+		return nil
 	}
 
 	projects := os.Args[2:]
 
-	envVarFile := getEnvVarFile()
-	envVars := loadEnvVars()
+	envVarFile, err := getEnvVarFile()
+	if err != nil {
+		return err
+	}
+
+	envVars, err := loadEnvVars()
+	if err != nil {
+		return err
+	}
 
 	for _, project := range projects {
 		if project == "" {
-			fmt.Println("Error: Project cannot be an empty string.")
-			return
+			return fmt.Errorf("project cannot be an empty string")
 		}
 
 		if _, exist := envVars[project]; !exist {
-			fmt.Printf("Error: The project %q does not exist.\n", project)
-			return
+			return fmt.Errorf("project %q does not exist", project)
 		}
 
 		delete(envVars, project)
 	}
 
-	writeEnvVarsToFile(envVars, envVarFile)
+	if err := writeEnvVarsToFile(envVars, envVarFile); err != nil {
+		return err
+	}
 
-	fmt.Println("Info: Successfully purged project.")
+	return nil
 }
 
-func remove() {
+func remove() error {
 	if len(os.Args) < 4 {
 		fmt.Println("Usage: keyper remove <project> <key> ...")
-		return
+		return nil
 	}
 
 	project := os.Args[2]
 	if project == "" {
-		fmt.Println("Error: Project cannot be an empty string.")
-		return
+		return fmt.Errorf("project cannot be an empty string")
 	}
 
 	keys := os.Args[3:]
 
-	envVarFile := getEnvVarFile()
-	envVars := loadEnvVars()
+	envVarFile, err := getEnvVarFile()
+	if err != nil {
+		return err
+	}
+
+	envVars, err := loadEnvVars()
+	if err != nil {
+		return err
+	}
 
 	if _, exist := envVars[project]; !exist {
-		fmt.Println("Error: The project does not exist.")
-		return
+		return fmt.Errorf("project does not exist")
 	}
 
 	for _, key := range keys {
 		if _, exist := envVars[project][key]; !exist {
-			fmt.Printf("Error: No environment variable exists with the key %q for the project %q\n", key, project)
-			return
+			return fmt.Errorf("no environment variable exists with the key %q for the project %q", key, project)
 		}
+
 		delete(envVars[project], key)
 	}
 
-	writeEnvVarsToFile(envVars, envVarFile)
-
-	fmt.Println("Info: Successfully removed environment variable from the project.")
+	if err := writeEnvVarsToFile(envVars, envVarFile); err != nil {
+		return err
+	}
+	return nil
 }
