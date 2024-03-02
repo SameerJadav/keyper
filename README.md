@@ -8,6 +8,8 @@ Keyper is a CLI tool for effortlessly managing your environment variables. Save 
 - [Usage Example](#usage-example)
   - [Save Environment Variables](#save-environment-variables)
   - [Retrieve Environment Variables](#retrieve-environment-variables)
+  - [Remove Environment Variables](#remove-environment-variables)
+  - [Purge Project and its Variables](#purge-project-and-its-variables)
   - [Pro-Tip](#pro-tip)
 - [Contributing](#contributing)
 - [License](#license)
@@ -24,26 +26,76 @@ This will install a Go binary that automatically binds to your `$GOPATH`.
 
 ## Usage Example
 
-Keyper is extremly simple to use. You can save environment variables with `keyper set <project> <key=value>` command and retrieve them with `keyper get <project>` command.
+Keyper is designed for simplicity. It's a [grug brain tool](https://grugbrain.dev/#grug-on-tools).
 
 ### Save Environment Variables
 
+**Command:**
+
 ```
-keyper set my-project DB_HOST=localhost DB_PORT=5432
+keyper set <project> <key=value> ...
 ```
 
+**Example:**
+
+```
+keyper set my-project DATABASE_URL=postgresql://localhost/mydb DATABASE_AUTH_TOKEN=42069
+```
+
+Saves the specified key-value pairs as environment variables for the given project, overwriting existing variables with the same keys.
+
 ### Retrieve Environment Variables
+
+**Command:**
+
+```
+keyper get <project>
+```
+
+**Example:**
 
 ```
 keyper get my-project
 ```
 
-This command will display the saved environment variables.
+Displays the saved environment variables for the specified project.
 
 ```
-DB_HOST=localhost
-DB_PORT=5432
+DATABASE_URL=postgresql://localhost/mydb
+DATABASE_AUTH_TOKEN=42069
 ```
+
+### Remove Environment Variables
+
+**Command:**
+
+```
+keyper remove <project> <key> ...
+```
+
+**Example:**
+
+```
+keyper remove my-project DATABASE_URL
+```
+
+Permanently removes the specified environment variables from the given project.
+
+### Purge Project and its Variables
+
+**Command:**
+
+```
+keyper purge <project> ...
+```
+
+**Example:**
+
+```
+keyper purge my-project
+```
+
+Permanently removes the entire project and all its associated environment variables. Use this command with caution.
 
 ### Pro-Tip
 
@@ -55,7 +107,7 @@ keyper get my-project > .env
 
 ## Contributing
 
-If you'd like to contribute to Keyper, please feel free to open an issue or submit a pull request. We welcome your suggestions and improvements!
+If you'd like to contribute to Keyper, please feel free to open an issue or submit a pull request. I welcome your suggestions and improvements!
 
 ## License
 
