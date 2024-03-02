@@ -53,5 +53,7 @@ func save() error {
 		return err
 	}
 
+	fmt.Println("Info: successfully saved environment variables.")
+
 	return nil
 }

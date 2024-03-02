@@ -39,6 +39,8 @@ func purge() error {
 		return err
 	}
 
+	fmt.Println("Info: successfully purged project.")
+
 	return nil
 }
 
@@ -80,5 +82,8 @@ func remove() error {
 	if err := writeEnvVarsToFile(envVars, envVarFile); err != nil {
 		return err
 	}
+
+	fmt.Println("Info: successfully removed environment variables.")
+
 	return nil
 }
