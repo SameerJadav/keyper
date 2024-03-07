@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"encoding/json"
@@ -19,7 +19,7 @@ EnvVars is the structure of keyper.json file
 */
 type EnvVars map[string]map[string]string
 
-func getEnvVarFile() (string, error) {
+func GetEnvVarsFilePath() (string, error) {
 	paths := map[string]string{
 		"linux":   filepath.Join(os.Getenv("HOME"), ".config", "keyper.json"),
 		"darwin":  filepath.Join(os.Getenv("HOME"), ".config", "keyper.json"),
@@ -34,8 +34,8 @@ func getEnvVarFile() (string, error) {
 	return path, nil
 }
 
-func loadEnvVars() (EnvVars, error) {
-	envVarFile, err := getEnvVarFile()
+func LoadEnvVars() (EnvVars, error) {
+	envVarFile, err := GetEnvVarsFilePath()
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func loadEnvVars() (EnvVars, error) {
 	return envVars, nil
 }
 
-func writeEnvVarsToFile(envVars EnvVars, envVarFile string) error {
+func WriteEnvVarsToFile(envVars EnvVars, envVarFile string) error {
 	data, err := json.Marshal(envVars)
 	if err != nil {
 		return fmt.Errorf("failed to encode data as JSON")
@@ -67,5 +67,12 @@ func writeEnvVarsToFile(envVars EnvVars, envVarFile string) error {
 		return fmt.Errorf("failed to save environment variables")
 	}
 
+	return nil
+}
+
+func ValidateProjectName(project string) error {
+	if project == "" {
+		return fmt.Errorf("project cannot be an empty string")
+	}
 	return nil
 }
