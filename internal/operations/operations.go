@@ -51,7 +51,7 @@ func SetEnvVars() error {
 		envVars[project][key] = value
 	}
 
-	if err := utils.WriteEnvVarsToFile(envVars, envVarFile); err != nil {
+	if err = utils.WriteEnvVarsToFile(envVars, envVarFile); err != nil {
 		return err
 	}
 
@@ -122,7 +122,7 @@ func RemoveProject() error {
 		delete(envVars, project)
 	}
 
-	if err := utils.WriteEnvVarsToFile(envVars, envVarFile); err != nil {
+	if err = utils.WriteEnvVarsToFile(envVars, envVarFile); err != nil {
 		return err
 	}
 
@@ -166,7 +166,7 @@ func RemoveEnvVars() error {
 		delete(envVars[project], key)
 	}
 
-	if err := utils.WriteEnvVarsToFile(envVars, envVarFile); err != nil {
+	if err = utils.WriteEnvVarsToFile(envVars, envVarFile); err != nil {
 		return err
 	}
 

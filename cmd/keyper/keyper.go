@@ -64,6 +64,6 @@ func Init() {
 		fmt.Println(description)
 		return
 	default:
-		log.Fatalln("Error: Unknown Command.\nRun \"keyper --help\" for usage.")
+		log.Fatalln("Error: unknown Command\nInfo : run \"keyper --help\" for usage")
 	}
 }

@@ -50,7 +50,7 @@ func LoadEnvVars() (EnvVars, error) {
 
 	var envVars EnvVars
 
-	if err := json.Unmarshal(file, &envVars); err != nil {
+	if err = json.Unmarshal(file, &envVars); err != nil {
 		return nil, fmt.Errorf("failed to decode the JSON file that contains the environment variables")
 	}
 
@@ -63,7 +63,7 @@ func WriteEnvVarsToFile(envVars EnvVars, envVarFile string) error {
 		return fmt.Errorf("failed to encode data as JSON")
 	}
 
-	if err := os.WriteFile(envVarFile, data, 0o644); err != nil {
+	if err = os.WriteFile(envVarFile, data, 0o644); err != nil {
 		return fmt.Errorf("failed to save environment variables")
 	}
 
