@@ -1,6 +1,7 @@
 package operations
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -39,13 +40,13 @@ func SetEnvVars() error {
 		kv := strings.Split(kvPair, "=")
 
 		if len(kv) != 2 {
-			return fmt.Errorf("invalid key=value pair %q\nPlease provide valid key-value pairs in the format \"key=value\"", kvPair)
+			return fmt.Errorf("invalid key=value pair %q\nInfo : please provide valid key-value pairs in the format \"key=value\"", kvPair)
 		}
 
 		key, value := kv[0], kv[1]
 
 		if key == "" || value == "" {
-			return fmt.Errorf("key and value cannot be an empty string")
+			return errors.New("key and value cannot be an empty string")
 		}
 
 		envVars[project][key] = value
@@ -67,7 +68,7 @@ func GetEnvVars() error {
 	}
 
 	if len(os.Args) > 3 {
-		return fmt.Errorf("only one project's environment variables can be retrieved.\nUsage: keyper get <project>")
+		return errors.New("only one project's environment variables can be retrieved.\nUsage: keyper get <project>")
 	}
 
 	envVars, err := utils.LoadEnvVars()
@@ -82,7 +83,7 @@ func GetEnvVars() error {
 
 	project, exist := envVars[projectAsArg]
 	if !exist {
-		return fmt.Errorf("project does not exist")
+		return errors.New("project does not exist")
 	}
 
 	for key, value := range project {
@@ -155,7 +156,7 @@ func RemoveEnvVars() error {
 	}
 
 	if _, exist := envVars[project]; !exist {
-		return fmt.Errorf("project does not exist")
+		return errors.New("project does not exist")
 	}
 
 	for _, key := range keys {

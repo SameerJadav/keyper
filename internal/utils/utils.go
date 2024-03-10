@@ -2,7 +2,7 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -28,7 +28,8 @@ func GetEnvVarsFilePath() (string, error) {
 
 	path, exist := paths[runtime.GOOS]
 	if !exist {
-		return "", fmt.Errorf("operating system not supported")
+		// return "", errors.New("operating system not supported")
+		return "", errors.New("operating system not supported")
 	}
 
 	return path, nil
@@ -45,13 +46,13 @@ func LoadEnvVars() (EnvVars, error) {
 	if os.IsNotExist(err) {
 		return make(EnvVars), nil
 	} else if err != nil {
-		return nil, fmt.Errorf("failed to read environment variables file")
+		return nil, errors.New("failed to read environment variables file")
 	}
 
 	var envVars EnvVars
 
 	if err = json.Unmarshal(file, &envVars); err != nil {
-		return nil, fmt.Errorf("failed to decode the JSON file that contains the environment variables")
+		return nil, errors.New("failed to decode the JSON file that contains the environment variables")
 	}
 
 	return envVars, nil
@@ -60,11 +61,11 @@ func LoadEnvVars() (EnvVars, error) {
 func WriteEnvVarsToFile(envVars EnvVars, envVarFile string) error {
 	data, err := json.Marshal(envVars)
 	if err != nil {
-		return fmt.Errorf("failed to encode data as JSON")
+		return errors.New("failed to encode data as JSON")
 	}
 
 	if err = os.WriteFile(envVarFile, data, 0o644); err != nil {
-		return fmt.Errorf("failed to save environment variables")
+		return errors.New("failed to save environment variables")
 	}
 
 	return nil
@@ -72,7 +73,7 @@ func WriteEnvVarsToFile(envVars EnvVars, envVarFile string) error {
 
 func ValidateProjectName(project string) error {
 	if project == "" {
-		return fmt.Errorf("project cannot be an empty string")
+		return errors.New("project cannot be an empty string")
 	}
 	return nil
 }
