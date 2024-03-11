@@ -2,6 +2,8 @@
 
 Keyper is a CLI tool for effortlessly managing your environment variables. Save environment variables locally and retrieve them with just one command. Built using only the standard libraries of Go. Keyper is simple, useful, and blazingly fast.
 
+https://github.com/SameerJadav/keyper/assets/109742866/98ca1bb9-9773-436c-960a-5561fb6f0c75
+
 # Table of Contents
 
 - [Installation](#installation)
