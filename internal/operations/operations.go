@@ -175,3 +175,36 @@ func RemoveEnvVars() error {
 
 	return nil
 }
+
+func GetAllEnvVars() error {
+	if len(os.Args) > 2 {
+		fmt.Println("Usage: keyper list")
+		return nil
+	}
+
+	envVars, err := utils.LoadEnvVars()
+	if err != nil {
+		return err
+	}
+
+	if len(envVars) == 0 {
+		fmt.Println("Info: no projects found")
+		return nil
+	}
+
+	for project, kvPairs := range envVars {
+		fmt.Printf("Project: %s\n", project)
+
+		if len(kvPairs) == 0 {
+			fmt.Println("no environment variables found for this project")
+		} else {
+			for key, value := range kvPairs {
+				fmt.Printf("%s=%s\n", key, value)
+			}
+		}
+
+		fmt.Println()
+	}
+
+	return nil
+}

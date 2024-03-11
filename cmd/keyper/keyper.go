@@ -24,7 +24,8 @@ Available Commands
           keyper remove <project> <key> ...
   purge   Remove the entire project and its environment variables
           keyper purge <project> ...
-
+  list    List all projects and their environment variables
+          keyper list
 
 Flags
   --help, -h  help for keyper
@@ -58,6 +59,10 @@ func Init() {
 		}
 	case "purge":
 		if err := operations.RemoveProject(); err != nil {
+			log.Fatalln("Error:", err)
+		}
+	case "list":
+		if err := operations.GetAllEnvVars(); err != nil {
 			log.Fatalln("Error:", err)
 		}
 	case "--help", "-h":
