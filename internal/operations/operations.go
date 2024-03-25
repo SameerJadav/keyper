@@ -20,13 +20,6 @@ func SetEnvVars() error {
 		return err
 	}
 
-	kvPairs := os.Args[3:]
-
-	envVarFile, err := utils.GetEnvVarsFilePath()
-	if err != nil {
-		return err
-	}
-
 	envVars, err := utils.LoadEnvVars()
 	if err != nil {
 		return err
@@ -36,20 +29,35 @@ func SetEnvVars() error {
 		envVars[project] = make(map[string]string)
 	}
 
-	for _, kvPair := range kvPairs {
-		kv := strings.Split(kvPair, "=")
+	keyValuePairs := os.Args[3:]
 
-		if len(kv) != 2 {
-			return fmt.Errorf("invalid key=value pair %q\nInfo : please provide valid key-value pairs in the format \"key=value\"", kvPair)
+	keySet := make(map[string]bool)
+
+	for _, keyValuePair := range keyValuePairs {
+		keyValue := strings.Split(keyValuePair, "=")
+
+		if len(keyValue) != 2 {
+			return fmt.Errorf("invalid key=value pair %q\nInfo : please provide valid key-value pairs in the format \"key=value\"", keyValuePair)
 		}
 
-		key, value := kv[0], kv[1]
+		key, value := keyValue[0], keyValue[1]
 
 		if key == "" || value == "" {
 			return errors.New("key and value cannot be an empty string")
 		}
 
+		if _, exist := keySet[key]; exist {
+			return fmt.Errorf("key %q is repeated", key)
+		}
+
+		keySet[key] = true
+
 		envVars[project][key] = value
+	}
+
+	envVarFile, err := utils.GetEnvVarsFilePath()
+	if err != nil {
+		return err
 	}
 
 	if err = utils.WriteEnvVarsToFile(envVars, envVarFile); err != nil {
