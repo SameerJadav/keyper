@@ -26,9 +26,8 @@ func GetEnvVarsFilePath() (string, error) {
 		"windows": filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "keyper.json"),
 	}
 
-	path, exist := paths[runtime.GOOS]
-	if !exist {
-		// return "", errors.New("operating system not supported")
+	path, ok := paths[runtime.GOOS]
+	if !ok {
 		return "", errors.New("operating system not supported")
 	}
 
@@ -42,7 +41,6 @@ func LoadEnvVars() (EnvVars, error) {
 	}
 
 	file, err := os.ReadFile(envVarFile)
-
 	if os.IsNotExist(err) {
 		return make(EnvVars), nil
 	} else if err != nil {

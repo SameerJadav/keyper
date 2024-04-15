@@ -25,7 +25,7 @@ func SetEnvVars() error {
 		return err
 	}
 
-	if _, exist := envVars[project]; !exist {
+	if _, ok := envVars[project]; !ok {
 		envVars[project] = make(map[string]string)
 	}
 
@@ -46,13 +46,13 @@ func SetEnvVars() error {
 			return errors.New("key and value cannot be an empty string")
 		}
 
-		if _, exist := keySet[key]; exist {
+		if _, ok := keySet[key]; ok {
 			return fmt.Errorf("key %q is repeated", key)
 		}
 
-		keySet[key] = true
-
 		envVars[project][key] = value
+
+		keySet[key] = true
 	}
 
 	envVarFile, err := utils.GetEnvVarsFilePath()
@@ -89,8 +89,8 @@ func GetEnvVars() error {
 		return err
 	}
 
-	project, exist := envVars[projectAsArg]
-	if !exist {
+	project, ok := envVars[projectAsArg]
+	if !ok {
 		return errors.New("project does not exist")
 	}
 
@@ -124,7 +124,7 @@ func RemoveProject() error {
 			return err
 		}
 
-		if _, exist := envVars[project]; !exist {
+		if _, ok := envVars[project]; !ok {
 			return fmt.Errorf("project %q does not exist", project)
 		}
 
@@ -163,12 +163,12 @@ func RemoveEnvVars() error {
 		return err
 	}
 
-	if _, exist := envVars[project]; !exist {
+	if _, ok := envVars[project]; !ok {
 		return errors.New("project does not exist")
 	}
 
 	for _, key := range keys {
-		if _, exist := envVars[project][key]; !exist {
+		if _, ok := envVars[project][key]; !ok {
 			return fmt.Errorf("no environment variable exists with the key %q for the project %q", key, project)
 		}
 
