@@ -2,7 +2,6 @@ package keyper
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/SameerJadav/keyper/internal/operations"
@@ -42,33 +41,37 @@ func Init() {
 		return
 	}
 
-	log.SetFlags(0)
-
 	switch os.Args[1] {
 	case "set":
 		if err := operations.SetEnvVars(); err != nil {
-			log.Fatalln("Error:", err)
+			fmt.Println("Error:", err)
+			os.Exit(1)
 		}
 	case "get":
 		if err := operations.GetEnvVars(); err != nil {
-			log.Fatalln("Error:", err)
+			fmt.Println("Error:", err)
+			os.Exit(1)
 		}
 	case "remove":
 		if err := operations.RemoveEnvVars(); err != nil {
-			log.Fatalln("Error:", err)
+			fmt.Println("Error:", err)
+			os.Exit(1)
 		}
 	case "purge":
 		if err := operations.RemoveProject(); err != nil {
-			log.Fatalln("Error:", err)
+			fmt.Println("Error:", err)
+			os.Exit(1)
 		}
 	case "list":
 		if err := operations.GetAllEnvVars(); err != nil {
-			log.Fatalln("Error:", err)
+			fmt.Println("Error:", err)
+			os.Exit(1)
 		}
 	case "--help", "-h":
 		fmt.Println(description)
 		return
 	default:
-		log.Fatalln("Error: unknown Command\nInfo : run \"keyper --help\" for usage")
+		fmt.Println("Error: unknown Command\nInfo : run \"keyper --help\" for usage")
+		os.Exit(1)
 	}
 }
