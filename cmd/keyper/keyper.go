@@ -1,6 +1,7 @@
 package keyper
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -41,6 +42,17 @@ func Init() {
 		return
 	}
 
+	helpFlag := false
+
+	flag.BoolVar(&helpFlag, "help", false, "show help")
+	flag.BoolVar(&helpFlag, "h", false, "show help (shorthand)")
+	flag.Parse()
+
+	if helpFlag {
+		fmt.Println(description)
+		return
+	}
+
 	switch os.Args[1] {
 	case "set":
 		if err := operations.SetEnvVars(); err != nil {
@@ -67,9 +79,6 @@ func Init() {
 			fmt.Println("Error:", err)
 			os.Exit(1)
 		}
-	case "--help", "-h":
-		fmt.Println(description)
-		return
 	default:
 		fmt.Println("Error: unknown Command\nInfo : run \"keyper --help\" for usage")
 		os.Exit(1)
