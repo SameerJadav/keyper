@@ -85,7 +85,7 @@ func GetEnvVars() error {
 	}
 
 	projectAsArg := os.Args[2]
-	if err := utils.ValidateProjectName(projectAsArg); err != nil {
+	if err = utils.ValidateProjectName(projectAsArg); err != nil {
 		return err
 	}
 
@@ -120,7 +120,7 @@ func RemoveProject() error {
 	}
 
 	for _, project := range projects {
-		if err := utils.ValidateProjectName(project); err != nil {
+		if err = utils.ValidateProjectName(project); err != nil {
 			return err
 		}
 
