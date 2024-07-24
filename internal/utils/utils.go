@@ -8,64 +8,95 @@ import (
 	"runtime"
 )
 
-type EnvVars map[string]map[string]string
+type (
+	EnvVars     map[string]string
+	Environment map[string]EnvVars
+	Projects    map[string]Environment
+)
 
-func GetEnvVarsFilePath() (string, error) {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
+func GetConfigFile() (string, error) {
+	var configDir string
 
 	switch runtime.GOOS {
-	case "linux", "darwin":
-		return filepath.Join(homeDir, ".config", "keyper.json"), nil
+	case "darwin", "linux":
+		configDir = os.Getenv("XDG_CONFIG_HOME")
+		if configDir == "" {
+			configDir = os.Getenv("HOME")
+			if configDir == "" {
+				return "", errors.New("unable to locate your configuration directory\nplease ensure either $XDG_CONFIG_HOME or $HOME is set in your environment")
+			}
+			configDir = filepath.Join(configDir, ".config", "keyper")
+		} else {
+			configDir = filepath.Join(configDir, "keyper")
+		}
 	case "windows":
-		return filepath.Join(homeDir, "AppData", "Local", "keyper.json"), nil
+		configDir = os.Getenv("AppData")
+		if configDir == "" {
+			return "", errors.New("unable to locate your AppData folder\nplease ensure %AppData% is set in your environment")
+		}
+		configDir = filepath.Join(configDir, "keyper")
 	default:
-		return "", errors.New("operating system not supported")
-
+		return "", errors.New("your operating system is not currently supported by Keyper\nsupported systems are Windows, macOS, and Linux")
 	}
+
+	if _, err := os.Stat(configDir); os.IsNotExist(err) {
+		if err = os.Mkdir(configDir, 0755); err != nil {
+			return "", errors.New("unable to create the configuration directory")
+		}
+	}
+
+	configFile := filepath.Join(configDir, "keyper.json")
+
+	if _, err := os.Stat(configFile); os.IsNotExist(err) {
+		if _, err := os.Create(configFile); err != nil {
+			return "", errors.New("unable to create the configuration file")
+		}
+	}
+
+	return configFile, nil
 }
 
-func LoadEnvVars() (EnvVars, error) {
-	envVarFile, err := GetEnvVarsFilePath()
+func LoadEnvs() (Projects, error) {
+	configFile, err := GetConfigFile()
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := os.ReadFile(envVarFile)
+	data, err := os.ReadFile(configFile)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return make(EnvVars), nil
+			return make(Projects), nil
 		}
-		return nil, errors.New("failed to read environment variables file")
+		return nil, errors.New("unable to read the configuration file")
 	}
 
-	var envVars EnvVars
-
-	if err = json.Unmarshal(data, &envVars); err != nil {
-		return nil, errors.New("failed to decode the JSON file that contains the environment variables")
+	if len(data) == 0 {
+		return make(Projects), nil
 	}
 
-	return envVars, nil
+	var projects Projects
+
+	if err = json.Unmarshal(data, &projects); err != nil {
+		return nil, errors.New("the configuration file appears to be corrupted or in an invalid format")
+	}
+
+	return projects, nil
 }
 
-func WriteEnvVarsToFile(envVars EnvVars, envVarFile string) error {
-	data, err := json.Marshal(envVars)
+func WriteEnvVarsToFile(projects Projects) error {
+	configFile, err := GetConfigFile()
 	if err != nil {
-		return errors.New("failed to encode data as JSON")
+		return err
 	}
 
-	if err = os.WriteFile(envVarFile, data, 0o644); err != nil {
-		return errors.New("failed to save environment variables")
+	data, err := json.Marshal(projects)
+	if err != nil {
+		return errors.New("an error occurred while preparing your environment variables for saving")
 	}
 
-	return nil
-}
-
-func ValidateProjectName(project string) error {
-	if project == "" {
-		return errors.New("project cannot be an empty string")
+	if err = os.WriteFile(configFile, data, 0644); err != nil {
+		return errors.New("unable to save your environment variables to the configuration file")
 	}
+
 	return nil
 }

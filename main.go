@@ -1,9 +1,14 @@
 package main
 
 import (
-	"github.com/SameerJadav/keyper/cmd/keyper"
+	"log"
+
+	"github.com/SameerJadav/keyper/cmd"
 )
 
 func main() {
-	keyper.Init()
+	log.SetFlags(0)
+	if err := cmd.Execute(); err != nil {
+		log.Fatalln(err)
+	}
 }

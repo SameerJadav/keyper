@@ -1,24 +1,24 @@
 # Keyper
 
-Keyper is a CLI tool for effortlessly managing your environment variables. Save environment variables locally and retrieve them with just one command. Built using only the standard libraries of Go. Keyper is simple, useful, and blazingly fast.
-
-https://github.com/SameerJadav/keyper/assets/109742866/98ca1bb9-9773-436c-960a-5561fb6f0c75
+Keyper is a CLI tool for effortlessly managing your environment variables.
+Save environment variables locally and retrieve them with just one command.
+Built using only the standard libraries of Go. Keyper is simple, useful, and blazingly fast.
 
 # Table of Contents
 
 - [Installation](#installation)
-- [Usage Example](#usage-example)
-  - [Save Environment Variables](#save-environment-variables)
-  - [Retrieve Environment Variables](#retrieve-environment-variables)
-  - [Remove Environment Variables](#remove-environment-variables)
-  - [Purge Project and its Variables](#purge-project-and-its-variables)
-  - [Pro-Tip](#pro-tip)
+- [Usage](#usage)
+  - [Save environment variables](#save-environment-variables)
+  - [Retrieve environment variables](#retrieve-environment-variables)
+  - [Remove environment variables](#remove-environment-variables)
+  - [Purge project or environment](#purge-project-or-environment)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Installation
 
-To install Keyper, ensure you have Go installed on your machine. If you haven't installed Go yet, you can follow the [official Go installation instructions](https://go.dev/doc/install).
+To install Keyper, ensure you have Go installed on your machine.
+If you haven't installed Go yet, you can follow the [official Go installation instructions](https://go.dev/doc/install).
 
 ```
 go install github.com/SameerJadav/keyper@latest
@@ -26,86 +26,58 @@ go install github.com/SameerJadav/keyper@latest
 
 This will install a Go binary that automatically binds to your `$GOPATH`.
 
-## Usage Example
+## Usage
 
 Keyper is designed for simplicity. It's a [grug brain tool](https://grugbrain.dev/#grug-on-tools).
 
-### Save Environment Variables
-
-**Command:**
+### Save environment variables
 
 ```
-keyper set <project> <key=value> ...
+keyper set todo-list -e prod -f .env
 ```
 
-**Example:**
+This command sets environment variables for the "todo-list" project.
+It uses the production environment (-e prod) and loads variables from .env file (-f .env).
+You can also add `key=value` pairs directly in the command instead of using a file.
+Run `keyper set --help` for more information.
+
+### Retrieve environment variables
 
 ```
-keyper set my-project DATABASE_URL=postgresql://localhost/mydb DATABASE_AUTH_TOKEN=42069
+keyper get todo-list -e dev -o .env
 ```
 
-Saves the specified key-value pairs as environment variables for the given project, overwriting existing variables with the same keys.
+This command retrieves environment variables for the "todo-list" project.
+It fetches variables from the development environment (-e dev) and saves them to a file named .env (-o .env).
+If -e is not specified, it retrieves variables for all environments.
+If -o is not specified, variables are printed to the console.
+Run `keyper get --help` for more information.
 
-### Retrieve Environment Variables
-
-**Command:**
-
-```
-keyper get <project>
-```
-
-**Example:**
+### Remove environment variables
 
 ```
-keyper get my-project
+keyper remove todo-list -force -e prod API_KEY SECRET_TOKEN
 ```
 
-Displays the saved environment variables for the specified project.
+This command removes specified environment variables (API_KEY and SECRET_TOKEN) from the "todo-list" project in the production environment (-e prod).
+The -force flag skips the confirmation prompt.
+If -e is omitted, it removes the variables from all environments.
+Run `keyper remove --help` for more information.
+
+**Note: Use with caution as this action cannot be undone.**
+
+### Purge project or environment
 
 ```
-DATABASE_URL=postgresql://localhost/mydb
-DATABASE_AUTH_TOKEN=42069
+keyper purge todo-list -force -e prod
 ```
 
-### Remove Environment Variables
+This command purges the "todo-list" project's production environment (-e prod).
+The -force flag skips the confirmation prompt.
+If -e is omitted, it purges the entire project and all its environments.
+Run `keyper purge --help` for more information.
 
-**Command:**
-
-```
-keyper remove <project> <key> ...
-```
-
-**Example:**
-
-```
-keyper remove my-project DATABASE_URL
-```
-
-Permanently removes the specified environment variables from the given project.
-
-### Purge Project and its Variables
-
-**Command:**
-
-```
-keyper purge <project> ...
-```
-
-**Example:**
-
-```
-keyper purge my-project
-```
-
-Permanently removes the entire project and all its associated environment variables. Use this command with caution.
-
-### Pro-Tip
-
-You can easily export environment variables to a `.env` file by just redirecting the result of the `keyper get` command to an `.env` file.
-
-```
-keyper get my-project > .env
-```
+**Note: Use with caution as this action cannot be undone.**
 
 ## Contributing
 
