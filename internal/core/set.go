@@ -81,15 +81,9 @@ func Set() error {
 			return err
 		}
 	} else {
-		file, err := os.Open(envFile)
+		envMap, err = envparse.ParseFile(envFile)
 		if err != nil {
-			return fmt.Errorf("unable to open %s\nplease check if the file exists and you have permission to read it", envFile)
-		}
-		defer file.Close()
-
-		envMap, err = envparse.Parse(file)
-		if err != nil {
-			return err
+			return fmt.Errorf("unable to read %s\nplease check if the file exists and you have permission to read it", envFile)
 		}
 	}
 
